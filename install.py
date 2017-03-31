@@ -4,7 +4,8 @@ import os
 os.system("clear")
 #icon
 os.system("chmod +x ico.png")
-os.system("sudo cp ico.png /usr/share/icons/")
+os.system("sudo mkdir /usr/share/icons/Notetux")
+os.system("sudo cp ico.png /usr/share/icons/NoteTux")
 
 #desktop
 os.system("sudo cp NoteTux.desktop /usr/share/applications")
@@ -15,5 +16,4 @@ os.system("sudo cp notetux.py /usr/bin")
 
 #sh
 os.system("chmod +x startnt.sh")
-os.system("sudo mkdir /usr/share/icons/Notetux")
 os.system("sudo cp startnt.sh /usr/bin/")
