@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=NoteTux
+Version=1.0
+Exec=startnt.sh
+Terminal=false
+Type=Application
+Icon=/usr/share/icons/Notetux/ico.ico
+Categories=GNOME;GTK;Utility;;
+StartupWMClass=NoteTux
+StartupNotify=true
+
+
