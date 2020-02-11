@@ -1,17 +1,10 @@
 [Desktop Entry]
 Name=NoteTux
 Version=1.0
-Exec=startnt.sh
+Exec=notetux.py
 Terminal=false
 Type=Application
-Icon=/usr/share/icons/Notetux/ico.png
+Icon=/usr/share/icons/NoteTux/ico.png
 Categories=GNOME;GTK;Utility;;
 StartupWMClass=NoteTux
 StartupNotify=true
-
-
-
-
-
-
-

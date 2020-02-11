@@ -4,7 +4,9 @@ from Tkinter import *
 from tkFileDialog import *
 from tkColorChooser import askcolor
 from ScrolledText import *
+import re
 #Funksiyalar
+location = ''
 def selectAll(event):
         text.tag_add(SEL, "1.0", END)
         text.mark_set(INSERT, "1.0")
@@ -12,10 +14,21 @@ def selectAll(event):
 def yeniFayl(event):
 	yaddaSaxla(event)
 	text.delete(0.0, END)
+####################################
 def yaddaSaxla(event):
-	f = asksaveasfile(mode="w", defaultextension=".txt")
-	t = text.get(0.0, END)
-	f.write(t.rstrip())
+    global location
+    t = text.get(0.0, END)
+    if location == '':
+        f = asksaveasfile(mode="w", defaultextension=".txt")
+        f.write(t.rstrip())
+        pattern = r"'([A-Za-z0-9_\./\\-]*)'"
+        a = str(f)
+        loc = re.search(pattern,a)
+        location = (loc.group()).replace("'","")
+    else:
+        f = open(location,'w')
+        f.write(t)
+###########################################3333
 def faylAc(event):
 	f = askopenfile(mode="r")
 	t = f.read()
