@@ -2,33 +2,58 @@
 #-*-coding:utf-8-*-
 from Tkinter import *
 from tkFileDialog import *
+import tkMessageBox
 from tkColorChooser import askcolor
 from ScrolledText import *
 import re
 #Funksiyalar
-location = ''
+#Faylı bir dəfə oxuyur
 pattern = r"'([A-Za-z0-9_\./\\-]*)'"
+def fileTest():
+    global t
+    if location == '':
+        return "notSaved"
+    else:
+        f=open(location,'r')
+        readFile = f.read()
+        #return readFile+t
+        if readFile == text.get(0.0, END).replace("\n",""):
+            return "Saved"
+        else:
+            return "notSaved"
+            window.title(" Notetux - Not Saved")
 def selectAll(event):
         text.tag_add(SEL, "1.0", END)
         text.mark_set(INSERT, "1.0")
         text.see(INSERT)
-def yeniFayl(event):
-	yaddaSaxla(event)
-	text.delete(0.0, END)
-####################################
-def yaddaSaxla():
-    global location
+def newFile(event):
+    save(event)
+    exit(event)
+    start()
+def saveas(event):
+    global location, t
     t = text.get(0.0, END)
-    if location == '':
-        f = asksaveasfile(mode="w", defaultextension=".txt")
+    f = asksaveasfile(mode="w", defaultextension=".txt")
+    try:
         f.write(t.rstrip())
         loc = re.search(pattern,str(f))
         location = (loc.group()).replace("'","")
+    except AttributeError:
+        pass
+
+def save(event):
+    global location
+    t = text.get(0.0, END)
+    if location == '':
+        saveas(event)
     else:
         f = open(location,'w')
-        f.write(t)
-###########################################3333
-def faylAc(event):
+        try:
+            f.write(t)
+        except AttributeError:
+            pass
+    window.title("Notetux"+" - "+location)
+def openFile(event):
     global location
     f = askopenfile(mode="r")
     t = f.read()
@@ -36,43 +61,60 @@ def faylAc(event):
     location = (loc.group()).replace("'","")
     text.delete(0.0, END)
     text.insert(0.0, t)
-def herfReng():
-        color = askcolor()
-        text.config(fg=color[1])
-def arxaplanReng():
-        color = askcolor()
-        text.config(bg=color[1])
-def cixish(event):
-        pencere.destroy()
-pencere = Tk()
-pencere.title("bashliq")
+    window.title("Notetux"+" - "+location)
+def fontColor():
+    color = askcolor()
+    text.config(fg=color[1])
+def bgColor():
+    color = askcolor()
+    text.config(bg=color[1])
+def exit(event):
+    if fileTest() == "notSaved":
+        ask=tkMessageBox.askquestion(title="Not Saved", message="Do you want to save file?")
+        if ask=="yes":
+            save(event)
+            window.destroy()
+        else:
+            window.destroy()
+    else:
+        window.destroy()
 
-text = ScrolledText(pencere, width="200", height="200", bg="#ADA89D", fg="#fff", font=32)
-text.pack()
+def start():
+    global location,window,text
+    location = ''
+    window = Tk()
+    window.title("Notetux")
 
-#Fayl Menyusu
-menubar = Menu(pencere)
-filemenu = Menu(menubar)
-filemenu.add_command(label="Yeni Səhifə   Ctrl+n", command=yeniFayl)
-filemenu.add_command(label="Aç...     Ctrl+o", command=faylAc)
-filemenu.add_command(label="Saxla   Ctrl+s", command=yaddaSaxla)
-filemenu.add_separator()
-filemenu.add_command(label="Çıxış", command=cixish)
-menubar.add_cascade(label="Fayl", menu=filemenu)
+    text = ScrolledText(window, width="200", height="200", bg="#292929", fg="#DEDEDE",insertbackground='white', font=("Helvetica", 20))
+    text.pack()
 
-#Qisayol
-filemenu.bind_all('<Control-q>', cixish)
-filemenu.bind_all('<Control-s>', yaddaSaxla)
-filemenu.bind_all('<Control-o>', faylAc)
-filemenu.bind_all('<Control-n>', yeniFayl)
-pencere.bind_all('<Control-a>', selectAll)
-#color
-elave = Menu(menubar)
-elave.add_command(label="Hərf rəngini seç", command=herfReng)
-elave.add_command(label="Arxaplan rəngini seç", command=arxaplanReng)
-menubar.add_cascade(label="Əlavə", menu=elave)
+    #Fayl Menyusu
+    menubar = Menu(window)
+    filemenu = Menu(menubar)
+    filemenu.add_command(label="Yeni Səhifə   Ctrl+N", command=newFile)
+    filemenu.add_command(label="Aç...     Ctrl+O", command=openFile)
+    filemenu.add_command(label="Saxla   Ctrl+S", command=save)
+    filemenu.add_command(label="... kimi saxla   Ctrl+Shift+S", command=saveas)
+    filemenu.add_separator()
+    filemenu.add_command(label="Çıxış", command=exit)
+    menubar.add_cascade(label="Fayl", menu=filemenu)
+
+    #Qisayol
+    filemenu.bind_all('<Control-q>', exit)
+    filemenu.bind_all('<Control-s>', save)
+    filemenu.bind_all('<Control-Shift-S>',saveas)  # upper S, because when you press Shift, it will be lowecase
+    filemenu.bind_all('<Control-o>', openFile)
+    filemenu.bind_all('<Control-n>', newFile)
+    window.bind_all('<Control-a>', selectAll)
+    #color
+    more = Menu(menubar)
+    more.add_command(label="Hərf rəngini seç", command=fontColor)
+    more.add_command(label="Arxaplan rəngini seç", command=bgColor)
+    menubar.add_cascade(label="Əlavə", menu=more)
 
 
 
-pencere.config(menu=menubar)
-pencere.mainloop()
+    window.config(menu=menubar)
+    window.mainloop()
+if __name__ == '__main__':
+    start()
