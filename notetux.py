@@ -7,6 +7,7 @@ from ScrolledText import *
 import re
 #Funksiyalar
 location = ''
+pattern = r"'([A-Za-z0-9_\./\\-]*)'"
 def selectAll(event):
         text.tag_add(SEL, "1.0", END)
         text.mark_set(INSERT, "1.0")
@@ -15,25 +16,26 @@ def yeniFayl(event):
 	yaddaSaxla(event)
 	text.delete(0.0, END)
 ####################################
-def yaddaSaxla(event):
+def yaddaSaxla():
     global location
     t = text.get(0.0, END)
     if location == '':
         f = asksaveasfile(mode="w", defaultextension=".txt")
         f.write(t.rstrip())
-        pattern = r"'([A-Za-z0-9_\./\\-]*)'"
-        a = str(f)
-        loc = re.search(pattern,a)
+        loc = re.search(pattern,str(f))
         location = (loc.group()).replace("'","")
     else:
         f = open(location,'w')
         f.write(t)
 ###########################################3333
 def faylAc(event):
-	f = askopenfile(mode="r")
-	t = f.read()
-	text.delete(0.0, END)
-	text.insert(0.0, t)
+    global location
+    f = askopenfile(mode="r")
+    t = f.read()
+    loc = re.search(pattern,str(f))
+    location = (loc.group()).replace("'","")
+    text.delete(0.0, END)
+    text.insert(0.0, t)
 def herfReng():
         color = askcolor()
         text.config(fg=color[1])
@@ -43,7 +45,7 @@ def arxaplanReng():
 def cixish(event):
         pencere.destroy()
 pencere = Tk()
-pencere.title("NoteTux")
+pencere.title("bashliq")
 
 text = ScrolledText(pencere, width="200", height="200", bg="#ADA89D", fg="#fff", font=32)
 text.pack()
