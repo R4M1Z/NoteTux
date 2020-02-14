@@ -91,13 +91,13 @@ def start():
     #Fayl Menyusu
     menubar = Menu(window)
     filemenu = Menu(menubar)
-    filemenu.add_command(label="Yeni Səhifə   Ctrl+N", command=newFile)
-    filemenu.add_command(label="Aç...     Ctrl+O", command=openFile)
-    filemenu.add_command(label="Saxla   Ctrl+S", command=save)
-    filemenu.add_command(label="... kimi saxla   Ctrl+Shift+S", command=saveas)
+    filemenu.add_command(label="New File   Ctrl+N", command=newFile)
+    filemenu.add_command(label="Open File...     Ctrl+O", command=openFile)
+    filemenu.add_command(label="Save   Ctrl+S", command=save)
+    filemenu.add_command(label="Save As...   Ctrl+Shift+S", command=saveas)
     filemenu.add_separator()
-    filemenu.add_command(label="Çıxış", command=exit)
-    menubar.add_cascade(label="Fayl", menu=filemenu)
+    filemenu.add_command(label="Quit", command=exit)
+    menubar.add_cascade(label="File", menu=filemenu)
 
     #Qisayol
     filemenu.bind_all('<Control-q>', exit)
@@ -108,9 +108,9 @@ def start():
     window.bind_all('<Control-a>', selectAll)
     #color
     more = Menu(menubar)
-    more.add_command(label="Hərf rəngini seç", command=fontColor)
-    more.add_command(label="Arxaplan rəngini seç", command=bgColor)
-    menubar.add_cascade(label="Əlavə", menu=more)
+    more.add_command(label="Set Font Color", command=fontColor)
+    more.add_command(label="Set Background Color", command=bgColor)
+    menubar.add_cascade(label="More", menu=more)
 
 
 
