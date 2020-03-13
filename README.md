@@ -2,10 +2,8 @@
 
 
 A Text Editor written in Python(2)
-Enter these commands to install NoteTux:
-        cd NoteTux/
-        python install.py
+<h2>Enter these commands to install NoteTux:</h2><br>
+        cd NoteTux/<br>
+        python install.py<br>
+<a href='https://facebook.com/ramizsmnv'>Facebook</a>
 
-Facebook: https://facebook.com/ramizsmnv
-
-Youtube: https://www.youtube.com/channel/UChLPUvBUfKn4eesdTkw4myA
