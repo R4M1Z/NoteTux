@@ -7,20 +7,19 @@ from tkColorChooser import askcolor
 from ScrolledText import *
 import re
 #Functions
-pattern = r"'([A-Za-z0-9_\./\\-]*)'"
-def fileTest():
+pattern = r"'([A-Za-z0-9_\./\\-]*)'"        # pattern to get file's name from path
+def fileTest():                             # function to check if file is already saved
     global location
-    if location == '':
-        if text.get(0.0, END).replace("\n","")!='':
+    if location == '':                                          # Program is opened for first time;
+        if text.get(0.0, END).replace("\n","")!='':             # and user didn't write anything yet.
             return "notSaved"
     else:
         f=open(location,'r')
         readFile = f.read()
-        if readFile.replace("\n","") == text.get(0.0, END).replace("\n",""):
-            return "Saved"
+        if readFile.replace("\n","") == text.get(0.0, END).replace("\n",""):      # Check if current content is the same as file's content
+            return "Saved"                                                        # used replace's coz it automatically add new line, and i should delete them for comparison
         else:
             return "notSaved"
-            window.title(" Notetux - Not Saved")
 
 
 def selectAll(event):
@@ -30,12 +29,12 @@ def selectAll(event):
 
 
 def newFile(event):
-    global ask
+    global ask      # variable from notSavedWarn func.
     if fileTest() == "notSaved":
-        if ask == True:
+        if ask == True:     # if user wants to save file
             save(event)
-        elif ask==None:
-            return 0
+        elif ask==None:      # if user clicks to cancel button
+            return 0         # don't do anything and close newFile func.
     exit(event)
     start()
 
@@ -44,7 +43,7 @@ def saveas(event):
     global location,t
     try:
         f = asksaveasfile(mode="w", defaultextension=".txt")
-        f.write(t.rstrip())
+        f.write(t.rstrip())                         # Without rstrip, whitespaces will be deleted automatically
         loc = re.search(pattern,str(f))
         location = (loc.group()).replace("'","")
     except AttributeError:
@@ -97,7 +96,10 @@ def notSavedWarn(event):                            # Warning message if the fil
     global ask
     ask=tkMessageBox.askyesnocancel(title="Not Saved", message="Do you want to save file?")
 
-def exit(event):
+    # NOTE:  I didn't return a value because every time when i call notSavedWarn, it will show a message
+    # Instead, i used global var - ask, so it'll call notSavedWarn just one time
+
+def exit(event):        # I think you already understand how this func. works
     global ask
     if fileTest() == "notSaved":
         notSavedWarn(event)
@@ -135,7 +137,12 @@ def start():
     filemenu.bind_all('<Control-q>', exit)
     filemenu.bind_all('<Control-s>', save)
     filemenu.bind_all('<Control-Shift-S>',saveas)  # upper S, because when you press Shift, it will be lowecase
+
+    #-------------------------------------------------------------------------------------------------
     filemenu.bind_all('<Control-Shift-O>', openFile) # upper O, because when you press Shift, it will be lowecase
+    # NOTE:  I know it must be Ctrl+O
+    # But when user press Ctrl+O, it creates new line (I couldn't describe this try and see :D )
+
     filemenu.bind_all('<Control-n>', newFile)
     window.bind_all('<Control-a>', selectAll)
     #color
