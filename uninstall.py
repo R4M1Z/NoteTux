@@ -3,7 +3,7 @@
 import os
 os.system("clear")
 #icon
-os.system("sudo rm -rf /usr/share/icons/Notetux")
+os.system("sudo rm -rf /usr/share/icons/NoteTux")
 
 #desktop
 os.system("sudo rm /usr/share/applications/NoteTux.desktop")

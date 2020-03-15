@@ -13,4 +13,4 @@ os.system("sudo cp NoteTux.desktop /usr/share/applications")
 #main
 os.system("chmod +x notetux.py")
 os.system("sudo cp notetux.py /usr/bin")
-print "Quraşdırılma uğurla tamamlandı"
+print "\033[95mInstalled succesfully"

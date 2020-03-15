@@ -6,35 +6,44 @@ import tkMessageBox
 from tkColorChooser import askcolor
 from ScrolledText import *
 import re
-#Funksiyalar
-#Faylı bir dəfə oxuyur
+#Functions
 pattern = r"'([A-Za-z0-9_\./\\-]*)'"
 def fileTest():
-    global t
+    global location
     if location == '':
-        return "notSaved"
+        if text.get(0.0, END).replace("\n","")!='':
+            return "notSaved"
     else:
         f=open(location,'r')
         readFile = f.read()
-        #return readFile+t
-        if readFile == text.get(0.0, END).replace("\n",""):
+        if readFile.replace("\n","") == text.get(0.0, END).replace("\n",""):
             return "Saved"
         else:
             return "notSaved"
             window.title(" Notetux - Not Saved")
+
+
 def selectAll(event):
         text.tag_add(SEL, "1.0", END)
-        text.mark_set(INSERT, "1.0")
+        text.mark_set(INSERT, END)
         text.see(INSERT)
+
+
 def newFile(event):
-    save(event)
+    global ask
+    if fileTest() == "notSaved":
+        if ask == True:
+            save(event)
+        elif ask==None:
+            return 0
     exit(event)
     start()
+
+
 def saveas(event):
-    global location, t
-    t = text.get(0.0, END)
-    f = asksaveasfile(mode="w", defaultextension=".txt")
+    global location,t
     try:
+        f = asksaveasfile(mode="w", defaultextension=".txt")
         f.write(t.rstrip())
         loc = re.search(pattern,str(f))
         location = (loc.group()).replace("'","")
@@ -42,38 +51,61 @@ def saveas(event):
         pass
 
 def save(event):
-    global location
+    global location,t
     t = text.get(0.0, END)
-    if location == '':
+    if location == '':                          # when users open window for first time, there is not location to save file, so we need save as.. window
         saveas(event)
-    else:
+    else:                                       # if file already has a location
         f = open(location,'w')
         try:
             f.write(t)
         except AttributeError:
             pass
     window.title("Notetux"+" - "+location)
-def openFile(event):
-    global location
-    f = askopenfile(mode="r")
+
+def openFile(event):                                # Open a file
+    global location,ask
+    if fileTest() == "notSaved":
+        notSavedWarn(event)                         # Ask question
+        if ask == True:               # if user wants to open new file before save current file
+            save(event)
+        elif ask == None:
+            return 0
+    try:
+        f = askopenfile(mode="r")
+    except:
+        pass
     t = f.read()
-    loc = re.search(pattern,str(f))
+    loc = re.search(pattern,str(f))                 # Get file's name
     location = (loc.group()).replace("'","")
     text.delete(0.0, END)
     text.insert(0.0, t)
-    window.title("Notetux"+" - "+location)
-def fontColor():
+    window.title("Notetux"+" - "+location)          # Add current location to window's title
+
+
+def fontColor():                                    # Change fonr color
     color = askcolor()
     text.config(fg=color[1])
-def bgColor():
+
+
+def bgColor():                                       # Change background color
     color = askcolor()
     text.config(bg=color[1])
+
+
+def notSavedWarn(event):                            # Warning message if the file is not saved
+    global ask
+    ask=tkMessageBox.askyesnocancel(title="Not Saved", message="Do you want to save file?")
+
 def exit(event):
+    global ask
     if fileTest() == "notSaved":
-        ask=tkMessageBox.askquestion(title="Not Saved", message="Do you want to save file?")
-        if ask=="yes":
+        notSavedWarn(event)
+        if ask==True:
             save(event)
             window.destroy()
+        elif ask==None:
+            return 0
         else:
             window.destroy()
     else:
@@ -85,25 +117,25 @@ def start():
     window = Tk()
     window.title("Notetux")
 
-    text = ScrolledText(window, width="200", height="200", bg="#292929", fg="#DEDEDE",insertbackground='white', font=("Helvetica", 20))
+    text = ScrolledText(window, width="200", height="200", bg="#292929", fg="#DEDEDE",insertbackground='white', font=("Helvetica", 20),undo=True)
     text.pack()
 
-    #Fayl Menyusu
+    #Menu
     menubar = Menu(window)
     filemenu = Menu(menubar)
     filemenu.add_command(label="New File   Ctrl+N", command=newFile)
-    filemenu.add_command(label="Open File...     Ctrl+O", command=openFile)
+    filemenu.add_command(label="Open File...     Ctrl+Shift+O", command=openFile)
     filemenu.add_command(label="Save   Ctrl+S", command=save)
     filemenu.add_command(label="Save As...   Ctrl+Shift+S", command=saveas)
     filemenu.add_separator()
     filemenu.add_command(label="Quit", command=exit)
     menubar.add_cascade(label="File", menu=filemenu)
 
-    #Qisayol
+    #Shortcut
     filemenu.bind_all('<Control-q>', exit)
     filemenu.bind_all('<Control-s>', save)
     filemenu.bind_all('<Control-Shift-S>',saveas)  # upper S, because when you press Shift, it will be lowecase
-    filemenu.bind_all('<Control-o>', openFile)
+    filemenu.bind_all('<Control-Shift-O>', openFile) # upper O, because when you press Shift, it will be lowecase
     filemenu.bind_all('<Control-n>', newFile)
     window.bind_all('<Control-a>', selectAll)
     #color
